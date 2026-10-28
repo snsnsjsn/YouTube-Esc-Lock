@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Esc Lock",
+  "version": "1.0.0",
+  "description": "Request Keyboard Lock for YouTube fullscreen; Alt+Enter toggles video fullscreen without taking Vimium C's f key.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+      "js": ["main.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}
