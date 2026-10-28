@@ -1,63 +1,72 @@
 # YouTube Esc Lock
 
-Keep YouTube fullscreen when you press **Escape** briefly. An open-source, minimal Chromium extension for **Microsoft Edge** and **Google Chrome**.
+**Prevent a brief press of Escape (Esc) from exiting YouTube fullscreen.**
 
-> Built to solve a real workflow issue: `f` is reserved for Vimium C link hints, while YouTube should stay fullscreen after a brief press of `Esc`.
+YouTube Esc Lock is a lightweight, open-source browser extension for Chromium-based browsers. It uses the browser's Keyboard Lock API to help keep YouTube videos fullscreen when you briefly press `Esc`.
 
 ## Features
 
-- Requests the browser **Keyboard Lock API** to prevent a brief `Esc` from exiting YouTube fullscreen, when permission is granted.
-- `Alt + Enter` toggles the YouTube player fullscreen.
-- Leaves `f` available for Vimium C.
-- Automatically runs on YouTube pages; no Tampermonkey required.
-- Small **Manifest V3** extension: no third-party libraries, no data collection, no network requests from the extension.
+- Helps prevent short presses of `Esc` from exiting YouTube fullscreen when Keyboard Lock is granted.
+- Automatically runs on YouTube pages—no DevTools or userscript required.
+- Supports `Alt + Enter` to toggle YouTube player fullscreen.
+- Uses Manifest V3 with no third-party libraries.
+- Does not collect user data or make extension-initiated network requests.
 
-## Installation (Edge)
+## Installation
 
-1. Download the source code ZIP from GitHub and extract it.
-2. Open `edge://extensions` in Edge.
+### Microsoft Edge
+
+1. Download this repository as a ZIP and extract it.
+2. Open `edge://extensions`.
 3. Enable **Developer mode**.
-4. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
-5. Reload any open YouTube tabs. Approve any keyboard-lock permission request presented by the browser.
+4. Click **Load unpacked** and select the folder containing `manifest.json`.
+5. Refresh your open YouTube tabs.
+6. Allow any Keyboard Lock permission request prompted by the browser.
 
-For Chrome, use `chrome://extensions` and the same procedure.
+### Google Chrome
 
-## Keyboard shortcuts
+Follow the same steps at `chrome://extensions`. Chrome compatibility may vary by version and permissions.
 
-| Shortcut | Behavior |
-| --- | --- |
-| `Alt + Enter` | Toggle YouTube player fullscreen |
-| `f` | Not intercepted; remains available to Vimium C |
-| Brief `Esc` | Remain fullscreen when Keyboard Lock succeeds |
-| Hold `Esc` | Browser emergency fullscreen exit remains available (browser-dependent) |
+## Usage
+
+1. Open a YouTube video.
+2. Enter video fullscreen using the player button or `Alt + Enter`.
+3. Briefly press `Esc`. When Keyboard Lock is active, the video stays fullscreen.
+
+Holding `Esc` may still trigger the browser's emergency fullscreen exit. This is intentional browser behavior.
 
 ## How it works
 
-The extension runs `main.js` as a `MAIN`-world content script, loaded at `document_start`. It calls `navigator.keyboard.lock(['Escape'])` on initialization and at relevant fullscreen interactions. It also tries to stop YouTube's own `Escape` keydown handlers after the browser confirms the lock.
+The extension injects `main.js` into YouTube pages using a Manifest V3 content script in the page's `MAIN` world at `document_start`. It requests `navigator.keyboard.lock(['Escape'])` at startup and around fullscreen interactions. When the lock is active, it also intercepts relevant Escape key events within the page.
 
-A JavaScript `preventDefault()` call alone cannot block a browser-level fullscreen exit. Keyboard Lock requires browser support and suitable permission/activation context.
+Calling `preventDefault()` alone does not reliably prevent the browser from exiting fullscreen. Keyboard Lock behavior depends on browser support and permissions.
 
 ## Compatibility and limitations
 
-- Confirmed working by the original user in **Microsoft Edge on YouTube**. No claim is made about every Edge or Chrome version.
-- YouTube interface changes or browser permission changes may affect behavior.
-- It does not disable the browser's emergency way to exit fullscreen.
-- `Alt + Enter` can conflict with other installed extensions or application shortcuts.
-- This is an independent project and is not affiliated with YouTube, Google or Microsoft.
+- Confirmed working in Microsoft Edge on YouTube by the original user.
+- Not guaranteed to work across every version of Chrome, Edge, or YouTube.
+- Browser security mechanisms for exiting fullscreen remain available.
+- `Alt + Enter` may conflict with other shortcuts.
+- Independent open-source project; not affiliated with YouTube, Google, or Microsoft.
 
 ## Development
 
-There is no build step. Edit `main.js` or `manifest.json`, then click **Reload** on the extension card in `edge://extensions` and reload the YouTube tab.
+No build step is needed. Modify `main.js` or `manifest.json`, then reload the extension in `edge://extensions` or `chrome://extensions` and refresh YouTube.
 
-Check manifest JSON with `python -m json.tool manifest.json`; check JS syntax with `node --check main.js`.
+Optional checks:
+
+```bash
+node --check main.js
+python -m json.tool manifest.json
+```
+
+## Contributing
+
+Issues and pull requests are welcome. For bug reports, include your browser version, reproduction steps, and relevant console messages. Please remove personal information from logs.
 
 ## Privacy
 
 See [PRIVACY.md](PRIVACY.md).
-
-## Contributions
-
-Bug reports and pull requests are welcome. For bugs, please include your browser version, the relevant Console output, and reproduction steps. Do not include personal information.
 
 ## License
 
